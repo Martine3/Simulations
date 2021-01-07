@@ -1,0 +1,304 @@
+
+
+<div class="col-md-10 canvas">
+    <!-- <canvas  class="canvas" id="canvas"></canvas> -->
+    <!-- <img id = 'sinkNode_lpg' src = 'images/S2-PCB-front clear.png'  style='position:absolute'  width = '200' height = '250'> -->
+</div>
+
+<!-- this link includes the pause and resume functionalities -->
+<script src="./js/pauseresume.js"></script>
+
+<script type = "text/javascript">
+    //var whole = $("#whole");
+    var playing = false;
+    //var twoMeterAudio = new sound("./audios/final_2mNode.mp3"); // create the audio object
+    
+$(document).ready(function(){
+
+    $( "#play" ).on('click',function(el) {
+        var board_position;
+        var battery;
+        var boost_position;
+        var panel_position;
+        var wind_position;
+        var anemo_position
+        el.stopImmediatePropagation();
+            //twoMeterAudio.play();// play the audio
+
+            
+        if ($("#play i").attr("class")==="fas fa-play"){
+            $("#play i").attr("class","fas fa-pause");
+                
+            if (playing===false){
+                
+                // var myCanvas = document.getElementById("canvas");
+                // var myCanvasContext = myCanvas.getContext("2d");
+                // var img = document.getElementById("sinkNode_lpg");
+                // myCanvasContext.drawImage(img, 10, 10);
+
+                $(".canvas").append("<img id = 'sinkNode_lpg' src = 'images/S2-PCB-front clear.png'  style='position:absolute; left: 300px'  width = '250' height = '250'>");
+                $(".canvas").append("<h4 id='step1' style='position: absolute; left: 10px'>Step 1</h4><p id='step1description'style='width:200px;position:absolute; left: 10px;top: 50px; border:2px solid #000000'>connect battery to motherboard</p>");
+                var a = $( "#sinkNode_lpg");                                        
+                var board_position = $("#sinkNode_lpg").offset();
+    
+                
+                $( "#sinkNode_lpg" ).delay(1000).animate({// wait for 18 seconds for the description of the mote
+                    left: "410",
+                    top: "0"
+                }, 2000,  function(){
+
+                $(".canvas").append("<img id = 'lithium' src = 'images/Li-ion capacitor2 clear.png' style='position:absolute; left:400px; top: 400px' width = '70' height = '120'/>");
+                var b = $( "#lithium" );
+                battery = $("#lithium").offset();
+
+                $( "#lithium" ).delay(1000).animate({  // wait for 5 seconds for the decsription of the sht25
+                left: "500",
+                top: "270"
+                }, 4500, function(){
+                        var rss2X = board_position.left+305;
+                        var rss2Y = board_position.top+201;
+
+                        //Coordinates for capacitor
+                        var capX = battery.left+140;
+                        var capY = battery.top-113;
+                        var rssArray = set_cordinates(rss2X, rss2Y);
+                        var capArray = set_cordinates(capX, capY);
+                        connect_images1(rssArray, capArray, "sinkNode_lpg");
+
+                        //line two
+                        var capX2 = battery.left+168;
+                        var capY2 = battery.top-117;
+
+                        //var rssArray = set_cordinates(rss2X, rss2Y);
+                        var capArray2 = set_cordinates(capX2, capY2);
+                        connect_images1(rssArray, capArray2, "sinkNode_lpg");
+                        
+                        setTimeout(animateboostConverter, 4000);
+                        
+                })
+                
+                });
+
+                function animateboostConverter(){
+                $("#step1").remove();
+                $("#step1description").remove();
+                $(".canvas").append("<h4 id='step2' position: absolute; left: 10px'>Step 2</h4><p id='step2description'style='width:200px;position:absolute; left: 10px;top: 50px; border:2px solid #000000'>connect boostConverter to the capacitor</p>");
+                $(".canvas").append("<img id = 'bc' src = 'images/DC Boost Converter.png' style='position:absolute; left:600px; top:400px' width = '100' height = '50'/>");
+                var c = $( "#bc" );
+                
+                boost_position = $("#bc").offset();
+
+                $( "#bc" ).delay(1000).animate({  // wait for 3 second
+                
+                left: "600",
+                top: "270"
+                
+                }, 2500, function(){
+                    //  Line one 
+                        var capYboost = battery.top-113;
+                        var capXboost = battery.left+168;
+                        var capArrayboost = set_cordinates(capXboost, capYboost);
+
+                        var boostX1boost = boost_position.left+28;
+                        var boostY1boost = boost_position.top-125;
+                        var boostArray1boost = set_cordinates(boostX1boost, boostY1boost);
+                        connect_images1(capArrayboost, boostArray1boost, "bc");
+
+                        //line two
+                        var capX2boost = battery.left+140;
+                        var capY2boost = battery.top-108;
+                        var capArray2boost = set_cordinates(capX2boost, capY2boost);
+
+                        var boostX2boost = boost_position.left+37;
+                        var boostY2boost = boost_position.top-88;
+                        var boostArray2boost = set_cordinates(boostX2boost, boostY2boost);
+                        connect_images1(capArray2boost, boostArray2boost, "bc");
+                $(".canvas").append("<h4 id='step1' style='color:red; display:none; position: absolute; left: 30px'>Step 1</h4>");
+                    
+                })
+                
+                setTimeout(animatesolarpannel, 4000);
+                
+            };
+            
+            function animatesolarpannel(){
+                $("#step2").remove();
+                $("#step2description").remove();
+                $(".canvas").append("<h4 id='step3' style='position: absolute; left: 10px'>Step 3</h4><p id='step3description'style='width:200px;position:absolute; left: 10px;top: 50px; border:2px solid #000000'>connect solarpanel to boostconvertor</p>");
+                $(".canvas").append("<img id = 'sp' src = 'images/solar panel 0.png' style='position:absolute; left:800px; top:550px' width = '100' height = '100'/>");
+                var f = $( "#sp" );
+
+                panel_position = $("#sp").offset();
+                $( "#sp" ).delay(1000).animate({   // delay for 0.02 seconds
+                left: "800",
+                top: "300"
+                }, 2000, function(){
+                    
+                    var boostX1p = boost_position.left+106;
+                    var boostY1p= boost_position.top-120;
+                    var boostArray1p = set_cordinates(boostX1p, boostY1p);
+
+                    var panelX1p = panel_position.left+35;
+                    var panelY1p = panel_position.top-165;
+                    var panelArray1p = set_cordinates(panelX1p, panelY1p);
+                    connect_images1(boostArray1p,panelArray1p, "bc");
+
+                    //line two
+                    var capX2p = panel_position.left+19;
+                    var capY2p= panel_position.top-160;
+                    var capArray2p = set_cordinates(capX2p, capY2p);
+
+                    var boostX2p = boost_position.left+112;
+                    var boostY2p = boost_position.top-88;
+                    var boostArray2p = set_cordinates(boostX2p, boostY2p);
+                    connect_images1(capArray2p, boostArray2p, "bc");
+                })
+                
+                setTimeout(windvane, 4000);
+                
+            };
+
+            
+
+            function windvane(){
+                $("#step3").remove();
+                $("#step3description").remove();
+                $(".canvas").append("<h4 id='step4' style='position: absolute; left: 10px'>Step 4</h4><p id='step4description'style='width:200px;position:absolute; left: 10px;top: 50px; border:2px solid #000000'>connect windvane to motherboard</p>");
+                $(".canvas").append("<img id = 'wv' src = 'images/windvane.png' style='position:absolute; left:850px; top:10px' width = '100' height = '150'/>");
+                var d = $( "#wv" );
+                
+                wind_position = $("#wv").offset();
+
+                $( "#wv" ).delay(1000).animate({  // wait for 1 second
+                 left: "640",
+                top: "5"
+                }, 4000,function(){
+                    //Line one 
+                    var rss2Xw = board_position.left+305;
+                        var rss2Yw= board_position.top+158;
+
+                        var capXw = wind_position.left-180;
+                        var capYw = wind_position.top+106;
+                        var rssArrayw = set_cordinates(rss2Xw, rss2Yw);
+                        var capArrayw = set_cordinates(capXw, capYw);
+                        connect_images1(rssArrayw, capArrayw, "sinkNode_lpg");
+
+                        //line two
+                        var capX2w = wind_position.left-180;
+                        var capY2w = wind_position.top+110;
+                        var rss2Xw2 = board_position.left+320;
+                        var rss2Yw2= board_position.top+157;
+
+                        var rssArray2w = set_cordinates(rss2Xw2, rss2Yw2);
+                        var capArray2w = set_cordinates(capX2w, capY2w);
+                        connect_images1(rssArray2w, capArray2w, "sinkNode_lpg");
+
+                        //line three
+                        var capX3w = wind_position.left-173;
+                        var capY3w = wind_position.top+110;
+                        var rss3Xw2 = board_position.left+325;
+                        var rss3Yw2= board_position.top+195;
+
+                        var rssArray3w = set_cordinates(rss3Xw2, rss3Yw2);
+                        var capArray3w = set_cordinates(capX3w, capY3w);
+                       connect_images1(rssArray3w, capArray3w, "sinkNode_lpg");
+
+                })
+                setTimeout(anemometer, 4000);
+                
+                };
+
+
+            function anemometer(){
+                $("#step4").remove();
+                $("#step4description").remove();
+                $(".canvas").append("<h4 id='step5' style='position: absolute; left: 10px'>Step 5</h4><p id='step5description'style='width:200px;position:absolute; left: 10px;top: 50px; border:2px solid #000000'>connect anemometer to motherboard</p>");
+                $(".canvas").append("<img id = 'am' src = 'images/anemometer.png' style='position:absolute; left:200px' width = '120' height = '150'/>");
+                var e = $( "#am" ); 
+                
+                anemo_position = $("#am").offset();  
+
+                $( "#am" ).delay(1000).animate({  // wait for 3 seconds
+                left: "300",
+                top: "0"
+                }, 2500,function(){
+                    //Line one 
+                        var rss2Xa = board_position.left+180;
+                        var rss2Ya= board_position.top+159;
+
+                        var capXa = anemo_position.left+128;
+                        var capYa = anemo_position.top+107;
+                        var rssArraya = set_cordinates(rss2Xa, rss2Ya);
+                        var capArraya = set_cordinates(capXa, capYa);
+                        connect_images1(rssArraya, capArraya, "sinkNode_lpg");
+
+                        //line two
+                        var capX2a = anemo_position.left+133;
+                        var capY2a = anemo_position.top+104;
+                        var rss2Xa2 = board_position.left+204;
+                        var rss2Ya2= board_position.top+158;
+
+                        var rssArray2a = set_cordinates(rss2Xa2, rss2Ya2);
+                        var capArray2a = set_cordinates(capX2a, capY2a);
+                        connect_images1(rssArray2a, capArray2a, "sinkNode_lpg");
+                });
+
+                
+            };
+             
+            playing=true;
+
+            //pause function                
+        }else{
+            var a = $( "#sinkNode_lpg" ).resume();
+            var b = $("#lithium").resume();
+            var c = $("#bc").resume();
+            var d = $("#wv").resume();      
+            var e = $("#am").resume();
+            var f = $("#sp").resume();
+            var g = $("#rg").resume();
+            }
+
+        }else{
+
+            $("#play i").attr("class","fas fa-play");
+            //twoMeterAudio.pause();
+            var a = $("#sinkNode_lpg" ).pause();
+            var b = $("#lithium").pause();
+            var c = $("#bc").pause();
+            var d = $("#wv").pause();       
+            var e = $("#wm").pause();                  
+            var f = $("#sp").pause(); 
+            var g = $("#rg").pause();                
+            }
+            
+            
+        });
+    
+        //stop function
+        $("#stop").click(function(){
+            
+            $("#sinkNode_lpg" ).stop(true);
+            $("#lithium").stop(true);
+            $("#bc").stop(true);
+            $("#wv").stop(true);
+            $("#am").stop(true);
+            $("#sp").stop(true);
+            $("#rg").stop(true);
+           
+            playing = false;
+            //twoMeterAudio.stop();
+            
+            $(".canvas").empty();
+            $(".canva").empty().append($("<div class='col-md-10 canvas'/>"));
+
+            //change pause icon to play icon on stop
+            $("#play i").attr("class","fas fa-play");
+
+        });
+
+
+    });
+
+            
+</script>
